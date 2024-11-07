@@ -1,0 +1,125 @@
+/* Body and default page styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #f0f6f6;
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    font-family: 'Acumin Variable Concept', sans-serif;
+    text-align: center;
+    z-index: 1000;
+    color: black; /* Make the header text visible */
+}
+
+h2 {
+    font-size: 1.1rem;
+    font-family: 'Acumin Variable Concept', sans-serif;
+    text-align: center;
+    color: black; 
+    font-weight: medium;
+    line-height: 0.6;
+    display: none; /* Hide h2 by default */
+}
+
+/* Header background and positioning */
+.header-background {
+    position: relative;
+    text-align: center;
+    padding: 20px 0;
+    width: 100vw;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.header-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 160px;
+    background-color: #ffffff;
+    z-index: -1;
+    box-shadow: 0px 10px 10px -10px rgba(143, 154, 154, 0.3);
+    border-bottom: 1.5px solid #bfcdcd;
+}
+
+/* Centered links container styling */
+.centered-links-container {
+    text-align: center;
+    padding: 10px;
+}
+
+.centered-links-container a {
+    display: inline-block;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-family: 'Acumin Variable Concept', sans-serif;
+    font-weight: bold;
+    color: #bfcdcd;
+    text-align: center;
+    text-decoration: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    transform: translateX(12px); /* Keep links shifted to the right */
+}
+
+/* Underline effect when hovered */
+.centered-links-container a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -7px;
+    width: 0;
+    height: 2px;
+    background-color: #000;
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+
+/* Hover effect: Underline expands */
+.centered-links-container a:hover {
+    color: #000; 
+}
+
+/* Active state for the links */
+.centered-links-container a.active {
+    color: #000;
+    font-weight: bold;
+}
+
+/* Underline for active state */
+.centered-links-container a.active::after {
+    width: 100%; /* Underline appears for active state */
+    background-color: #000;
+}
+
+/* Active (clicked) state */
+.centered-links-container a:active {
+    color: #ff5733; /* Color when clicked */
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 25px; 
+    margin-bottom: 7px;
+    vertical-align: middle;
+    filter: invert(0);
+}
+
+.icon:hover {
+    filter: invert(100%) brightness(0%);
+}
+
+/* Show guess-related text when the "Guess" link is active */
+.centered-links-container a.active[href="#guess"] ~ .guess-text {
+    display: block;
+}
