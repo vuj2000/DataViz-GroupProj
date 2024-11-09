@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hue Knew? - Movie Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+        }
+        #movie-info {
+            margin-top: 20px;
+        }
+        .blurred-image {
+            max-width: 200px;
+            margin: 10px 0;
+            filter: blur(15px); 
+        }
+        .clear-blur {
+            filter: blur(10px);
+        }
+        .light-blur {
+            filter: blur(7px);  /* Lighter blur reward */
+        }
+        .lightest-blur {
+            filter: blur(3px);  /* Even lighter blur for further stages */
+        }
+        .choices {
+            margin-top: 20px;
+        }
+        .choice {
+            display: inline-block;
+            padding: 10px;
+            background-color: #f0f0f0;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .choice:hover {
+            background-color: #ddd;
+        }
+        .correct {
+            background-color: green;  /* Correct choice: green */
+            color: white;
+        }
+        .incorrect {
+            background-color: red;  /* Incorrect choice: red */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hue Knew?</h1>
+    <p id="stage-instruction">Stage 1: Guess the genre</p>
+    <div id="movie-info"></div>
+    <div id="choices" class="choices"></div>
+
+    <script>
+        let currentStage = 1;
+let currentMovie = null;
+let genreList = [];
+
+// Fetch the list of genres globally
+async function fetchGenres() {
+    const apiKey = '3be2bc8a9d8fab379812442e317a4a99';
+    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        genreList = data.genres;
+        console.log("Genres fetched:", genreList);
+    } catch (error) {
+        console.error("Error fetching genres:", error);
+    }
+}
+
+// Function to map genre IDs to names
+function mapGenreIdsToNames(genreIds) {
+    return genreIds.map(id => {
+        const genre = genreList.find(g => g.id === id);
+        return genre ? genre.name : null;
+    }).filter(name => name);
+}
+
+async function getRandomMovie() {
+    const apiKey = '3be2bc8a9d8fab379812442e317a4a99';
+    const randomPage = Math.floor(Math.random() * 20) + 1;
+    const url = `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}&page=${randomPage}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const movie = data.results[Math.floor(Math.random() * data.results.length)];
+        return movie;
+    } catch (error) {
+        console.error("Error fetching movie:", error);
+        return null;
+    }
+}
+
+async function updateMovieInfo() {
+    if (genreList.length === 0) {
+        await fetchGenres();
+    }
+
+    const movie = await getRandomMovie();
+    if (!movie) {
+        alert("Failed to load movie data. Please try again.");
+        return;
+    }
+
+    currentMovie = movie;
+
+    const movieImagesUrl = `https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=3be2bc8a9d8fab379812442e317a4a99`;
+    const imagesResponse = await fetch(movieImagesUrl);
+    const imagesData = await imagesResponse.json();
+
+    const movieStill = imagesData.backdrops.find(
+        image => image.aspect_ratio > 1.7 && image.vote_count > 5
+    );
+
+    if (movieStill) {
+        const backdropHTML = `<img src="https://image.tmdb.org/t/p/w780${movieStill.file_path}" alt="${movie.title} Still" class="blurred-image" id="movie-backdrop" />`;
+        document.getElementById('movie-info').innerHTML = backdropHTML;
+        updateChoices();
+    } else {
+        alert("No suitable movie still found. Retrying...");
+        updateMovieInfo();
+    }
+}
+
+async function updateChoices() {
+    if (!currentMovie || !currentMovie.genre_ids || currentMovie.genre_ids.length === 0) {
+        console.error("No genres found for current movie:", currentMovie);
+        return;
+    }
+
+    const movieGenres = mapGenreIdsToNames(currentMovie.genre_ids);
+    const correctGenre = movieGenres[0];
+    const allGenres = ['Action', 'Adventure', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi', 'Fantasy'];
+    const incorrectGenres = allGenres.filter(genre => !movieGenres.includes(genre));
+    const shuffledGenres = incorrectGenres.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const genreChoices = [correctGenre, ...shuffledGenres].sort(() => 0.5 - Math.random());
+
+    const choicesHTML = genreChoices.map(genre => `
+        <div class="choice" onclick="checkGenre('${genre}', this)">${genre}</div>
+    `).join('');
+    document.getElementById('choices').innerHTML = choicesHTML;
+}
+
+function checkGenre(selectedGenre, button) {
+    const movieGenres = mapGenreIdsToNames(currentMovie.genre_ids);
+    const correctGenre = movieGenres[0];
+
+    if (selectedGenre === correctGenre) {
+        button.classList.add('correct');
+    } else {
+        button.classList.add('incorrect');
+    }
+
+    document.querySelectorAll('.choice').forEach(choice => {
+        choice.style.pointerEvents = 'none';
+    });
+
+    setTimeout(() => {
+        button.classList.remove('correct', 'incorrect');
+        document.querySelectorAll('.choice').forEach(choice => {
+            choice.style.pointerEvents = '';
+        });
+
+        currentStage++;
+        proceedToNextStage();
+    }, 1000);
+}
+
+async function proceedToNextStage() {
+    if (currentStage === 2) {
+        document.getElementById('stage-instruction').innerText = 'Stage 2: Guess the year';
+        updateChoicesForYear();
+    } else if (currentStage === 3) {
+        document.getElementById('stage-instruction').innerText = 'Stage 3: Guess the title';
+        updateChoicesForTitle();
+    } else {
+        document.getElementById('stage-instruction').innerText = 'Quiz Finished!';
+        
+        // Display the unblurred original image
+        const unblurredHTML = `<img src="https://image.tmdb.org/t/p/original${currentMovie.backdrop_path}" alt="${currentMovie.title} Original" id="movie-backdrop" />`;
+        document.getElementById('movie-info').innerHTML = unblurredHTML;
+
+        // Add "Retry?" button
+        document.getElementById('choices').innerHTML = `
+            <button onclick="resetQuiz()">Retry?</button>
+        `;
+    }
+}
+
+async function updateChoicesForYear() {
+    const movie = currentMovie;
+    const movieYear = movie.release_date.split('-')[0];
+    const yearChoices = [movieYear];
+    while (yearChoices.length < 4) {
+        const randomMovie = await getRandomMovie();
+        if (randomMovie && !yearChoices.includes(randomMovie.release_date.split('-')[0])) {
+            yearChoices.push(randomMovie.release_date.split('-')[0]);
+        }
+    }
+    const shuffledYears = yearChoices.sort(() => 0.5 - Math.random());
+
+    const choicesHTML = shuffledYears.map(year => `
+        <div class="choice" onclick="checkYear('${year}', this)">${year}</div>
+    `).join('');
+    document.getElementById('choices').innerHTML = choicesHTML;
+}
+
+function checkYear(selectedYear, button) {
+    const movieYear = currentMovie.release_date.split('-')[0];
+    const correctYear = selectedYear === movieYear;
+
+    if (correctYear) {
+        button.classList.add('correct');
+    } else {
+        button.classList.add('incorrect');
+    }
+
+    document.querySelectorAll('.choice').forEach(choice => {
+        choice.style.pointerEvents = 'none';
+    });
+
+    setTimeout(() => {
+        button.classList.remove('correct', 'incorrect');
+        document.querySelectorAll('.choice').forEach(choice => {
+            choice.style.pointerEvents = '';
+        });
+
+        currentStage++;
+        proceedToNextStage();
+    }, 1000);
+}
+
+async function updateChoicesForTitle() {
+    const movie = currentMovie;
+    const movieTitle = movie.title;
+    const titleChoices = [movieTitle];
+    while (titleChoices.length < 4) {
+        const randomMovie = await getRandomMovie();
+        if (randomMovie && !titleChoices.includes(randomMovie.title)) {
+            titleChoices.push(randomMovie.title);
+        }
+    }
+    const shuffledTitles = titleChoices.sort(() => 0.5 - Math.random());
+
+    const choicesHTML = shuffledTitles.map(title => `
+        <div class="choice" onclick="checkTitle('${title}', this)">${title}</div>
+    `).join('');
+    document.getElementById('choices').innerHTML = choicesHTML;
+}
+
+function checkTitle(selectedTitle, button) {
+    const movieTitle = currentMovie.title;
+    const correctTitle = selectedTitle === movieTitle;
+
+    if (correctTitle) {
+        button.classList.add('correct');
+    } else {
+        button.classList.add('incorrect');
+    }
+
+    document.querySelectorAll('.choice').forEach(choice => {
+        choice.style.pointerEvents = 'none';
+    });
+
+    setTimeout(() => {
+        button.classList.remove('correct', 'incorrect');
+        document.querySelectorAll('.choice').forEach(choice => {
+            choice.style.pointerEvents = '';
+        });
+
+        currentStage++;
+        proceedToNextStage();
+    }, 1000);
+}
+
+// Reset quiz function
+function resetQuiz() {
+    currentStage = 1;
+    currentMovie = null;
+    document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre';
+    updateMovieInfo();
+}
+
+// Start the quiz
+updateMovieInfo();
+
+
+    </script>
+</body>
+</html>

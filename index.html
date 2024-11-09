@@ -1,28 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hue Knew?</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="header-background">
     <h1>Hue Knew?</h1>
-    <div class="centered-links-container">
-        <a href="#about">About</a>
-        <a href="#guess" id="guess-link">Guess</a>
-        <a href="#map">Map</a>
-        <img src="images/options.svg" alt="Options Icon" class="icon">
+    <h2>The Ultimate Movie Quiz</h2>
+    <div id="quiz-container">
+        <div id="movie-info"></div>
+        <br>
+        <h2 id="stage-instruction">Stage 1: Guess the genre</h2>
+        <div id="choices"></div>
+        <br>
+        <div id="feedback-genre"></div>
+        <div id="feedback-year"></div>
+
     </div>
-</div>
-
-<h2 class="about-text">This is the about text.</h2>
-
-<h2 class="guess-text">This is the average color of a movie clip.</h2>
-<h2 class="guess-text">Can you guess the movie?</h2>
-
-<h2 class="map-text">This is the map text.</h2>
-
-<script src="main.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
