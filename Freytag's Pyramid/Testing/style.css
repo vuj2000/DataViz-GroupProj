@@ -1,0 +1,103 @@
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+#chart {
+    display: block;
+    width: 90%;
+    max-width: 1000px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.grid line {
+    stroke: #e0e0e0; /* Light gray for grid lines */
+    stroke-width: 1;
+}
+
+.tooltip {
+    position: absolute;
+    visibility: hidden;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: visibility 0.2s ease;
+}
+
+#guess-input {
+    padding: 10px;
+    font-size: 16px;
+    width: 220px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#guess-result {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #333;
+}
+
+.circle {
+    transition: fill 0.2s ease-out;
+}
+
+.circle:hover {
+    /* Remove all transform properties */
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 2px solid #888;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.modal-content {
+    font-size: 16px;
+}
+
+.close {
+    color: red;
+    font-size: 20px;
+    float: right;
+    cursor: pointer;
+}
