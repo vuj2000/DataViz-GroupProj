@@ -178,7 +178,7 @@ function resetQuiz() {
 
     // Update movie info and choices for the first stage
     updateMovieInfo();
-    updateChoices();
+    updateChoicesForGenre();
 }
 
 
@@ -228,11 +228,13 @@ function checkAnswer(button, selectedAnswer) {
             `Wrong guess! The movie is "${currentMovie.title}".`
         ];
     
-        // Randomly choose a message
-        let message;
+        // Determine if the selected answer is correct
+        let isCorrect = false;
         if (selectedAnswer === currentMovie.title) {
+            isCorrect = true; // The answer is correct
             message = quizFinishedMessages[Math.floor(Math.random() * quizFinishedMessages.length)];
         } else {
+            isCorrect = false; // The answer is incorrect
             message = incorrectMessages[Math.floor(Math.random() * incorrectMessages.length)];
         }
         
@@ -243,7 +245,11 @@ function checkAnswer(button, selectedAnswer) {
         document.getElementById('choices').innerHTML = `
             <button onclick="resetQuiz()">Retry?</button>
         `;
+    
+        // Optionally, pass isCorrect to update stats
+        finishQuiz(isCorrect);  // Assuming you have a function to handle stats or feedback
     }
+    
 
     // Change button colors
     button.style.backgroundColor = isCorrect ? '#ccfff2' : '#ffeaea';
@@ -318,6 +324,7 @@ function finishQuiz(isCorrect) {
 
 // Function to update stats in localStorage
 function updateStats(isCorrect) {
+    console.log('Is correct:', isCorrect); // Debug line
     const userStats = JSON.parse(localStorage.getItem('userStats')) || { attempts: 0, wins: 0, winRate: 0 };
 
     // Increment attempts after each quiz attempt (final guess)
@@ -339,6 +346,7 @@ function updateStats(isCorrect) {
     document.getElementById('wins').innerText = userStats.wins;
     document.getElementById('win-rate').innerText = userStats.winRate.toFixed(2);
 }
+
 
 
 
