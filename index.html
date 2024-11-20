@@ -3,22 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hue Knew?</title>
+    <title>HUE KNEW?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Hue Knew?</h1>
-    <h2>The Ultimate Movie Quiz</h2>
-    <div id="quiz-container">
-        <div id="movie-info"></div>
-        <br>
-        <h2 id="stage-instruction">Stage 1: Guess the genre</h2>
-        <div id="choices"></div>
-        <br>
-        <div id="feedback-genre"></div>
-        <div id="feedback-year"></div>
+    <header>
+        <h1>Hue Knew?</h1>
+        <h2>The Ultimate Movie Quiz</h2>
+        <button id="dark-mode-toggle" class="option">Dark Mode</button>
+    </header>
+    <div class="container">
+        <div class="screen screen-1">
+            
+            <br><br><br><br><br>
+            <div id="quiz-container">
+                <div id="movie-info"></div>
+                <div id="overlay"></div>
 
+                <br><br>
+                <h2 id="stage-instruction">Stage 1: Guess the genre!</h2>
+
+                <div id="choices"></div>
+                <br>
+                <div id="feedback-genre"></div>
+                <div id="feedback-year"></div>
+            </div>
+        </div>
+
+        <div id="screen-2" class="screen screen-2">
+            <div class="stats-container">
+                <h1>My Stats</h1>
+                <p>Attempts: <span id="attempts">0</span></p>
+                <p>Wins: <span id="wins">0</span></p>
+                <p>Win Rate: <span id="win-rate">0</span><b>%</b></p>
+                <br>
+                <p>Also log the wins/losses for the first two quizzes and do a simple chart to compare the three</p>
+            </div>
+
+            <h2>Created by:</h2>
+            <p>Hao Lee, Julia Kwon, and Vaibhav Jain</p>
+            <br><br>
+            <h2>Final project for:</h2>
+            <p>Data Visualization for Architecture, Urbanism, and the Humanities (2024)</p>
+            <p>Columbia University Graduate School of Architecture, Planning, and Preservation (GSAPP)</p>
+            <p>Instructor: Jia Zhang</p>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
-</html>
