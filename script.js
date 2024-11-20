@@ -162,30 +162,47 @@ async function proceedToNextStage() {
 
 // Resetting the Quiz
 function resetQuiz() {
+    // Update movie info and choices for the first stage
+    updateMovieInfo();
+    updateChoicesForGenre();
+
+    // Reset stage-related variables
     currentStage = 1;
     correctGenreGuessed = false;
     correctYearGuessed = false;
 
-    // Reset instructions
-    document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre';
-
-    // Clear choices
+    // Reset instructions and feedback text
+    document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre!';
+    document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+    document.getElementById('feedback-year').innerText = 'Tip 2: Year';
+    
+    // Reset the choices container
     document.getElementById('choices').innerHTML = '';
 
-    // Reset feedback to tips
-    document.getElementById('feedback-genre').innerText = 'Tip 1: Guess the genre of the movie!';
-    document.getElementById('feedback-year').innerText = 'Tip 2: Guess the year the movie was released!';
+    // Reset any blur effects (optional)
+    document.getElementById('overlay').style.filter = 'blur(10px)';
 
-    // Update movie info and choices for the first stage
-    updateMovieInfo();
-    updateChoicesForGenre();
+    // Reset feedback sections
+    document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+    document.getElementById('feedback-year').innerText = 'Tip 2: Year';
+    
+    // Reset additional quiz state
+    blurValue = 10;  // Optional: reset blur value to its starting state
+    overlay.style.filter = 'blur(10px)';
+    
+    // Optionally, re-enable any other features like buttons or next steps
+    // For example: make sure buttons are active again (if relevant)
+    enableButtons();  // This is an example; replace with your button-enabling logic if needed
 }
 
+// Function to handle enabling buttons, if you have one
+function enableButtons() {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.disabled = false; // Enable buttons if previously disabled
+    });
+}
 
-// Initialize tips for feedback and blur value
-document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
-document.getElementById('feedback-year').innerText = 'Tip 2: Year';
-let blurValue = 10;
 
 
 // Track win/loss and remove blur on correct answer
@@ -193,8 +210,8 @@ function checkAnswer(button, selectedAnswer) {
     let isCorrect = false;
     let feedbackText = "";
 
+    // Handle Stage 1: Genre
     if (currentStage === 1) {
-        // Stage 1: Genre 
         isCorrect = genreList.some(genre => genre.name === selectedAnswer && currentMovie.genre_ids.includes(genre.id));
         correctGenreGuessed = isCorrect;
         feedbackText = isCorrect ? `Tip 1: The genre is ${selectedAnswer}` : `Tip 1: The genre is NOT ${selectedAnswer}`;
@@ -203,8 +220,9 @@ function checkAnswer(button, selectedAnswer) {
         const feedbackGenreDiv = document.getElementById('feedback-genre');
         feedbackGenreDiv.innerHTML = feedbackText;
 
-    } else if (currentStage === 2) {
-        // Stage 2: Year
+    } 
+    // Handle Stage 2: Year
+    else if (currentStage === 2) {
         const selectedYear = selectedAnswer;
         const correctYear = currentMovie.release_date.split('-')[0];
         isCorrect = selectedYear === correctYear;
@@ -214,91 +232,73 @@ function checkAnswer(button, selectedAnswer) {
         // Update the year feedback
         const feedbackYearDiv = document.getElementById('feedback-year');
         feedbackYearDiv.innerHTML = feedbackText;
-    } else if (currentStage === 3) {
-        // Arrays for different responses
+    } 
+    // Handle Stage 3: Movie Title (Final Stage)
+    else if (currentStage === 3) {
         const quizFinishedMessages = [
             `Quiz Finished! The movie is "${currentMovie.title}"!`,
             `Congratulations! The movie was "${currentMovie.title}"!`,
             `Well done! The movie was "${currentMovie.title}"!`
         ];
-    
+
         const incorrectMessages = [
             `Incorrect! The movie is "${currentMovie.title}".`,
             `Oops! The movie was "${currentMovie.title}".`,
             `Wrong guess! The movie is "${currentMovie.title}".`
         ];
-    
-        // Determine if the selected answer is correct
-        let isCorrect = false;
+
         if (selectedAnswer === currentMovie.title) {
-            isCorrect = true; // The answer is correct
-            message = quizFinishedMessages[Math.floor(Math.random() * quizFinishedMessages.length)];
+            isCorrect = true;
+            feedbackText = quizFinishedMessages[Math.floor(Math.random() * quizFinishedMessages.length)];
         } else {
-            isCorrect = false; // The answer is incorrect
-            message = incorrectMessages[Math.floor(Math.random() * incorrectMessages.length)];
+            isCorrect = false;
+            feedbackText = incorrectMessages[Math.floor(Math.random() * incorrectMessages.length)];
         }
-        
+
         // Display the randomly chosen message
-        document.getElementById('stage-instruction').innerText = message;
-    
-        // Add "Retry?" button
+        document.getElementById('stage-instruction').innerText = feedbackText;
+
+        // Show "Retry?" button
         document.getElementById('choices').innerHTML = `
             <button onclick="resetQuiz()">Retry?</button>
         `;
-    
-        // Optionally, pass isCorrect to update stats
+
+        // Optionally, pass isCorrect to finish the quiz
         finishQuiz(isCorrect);  // Assuming you have a function to handle stats or feedback
     }
-    
 
-    // Change button colors
+    // Update button colors based on correctness
     button.style.backgroundColor = isCorrect ? '#ccfff2' : '#ffeaea';
     button.style.borderColor = isCorrect ? '#339999' : '#ea696c';
     button.style.color = isCorrect ? '#339999' : '#ea696c';
 
-
-    // Blur function------------important
+    // Update overlay blur effect based on stage and correctness
+    const overlay = document.getElementById('overlay');
     if (currentStage === 3) {
-        // Always set blur to 0px if currentStage is 3
-        const overlay = document.getElementById('overlay');
-        overlay.style.filter = 'blur(0px)';
+        overlay.style.filter = 'blur(0px)'; // No blur in final stage
     } else if (currentStage === 1) {
-        const overlay = document.getElementById('overlay');
-        if (isCorrect) {
-            overlay.style.filter = 'blur(10px)'; // Stage 1, correct answer, set blur to 10px
-        } else {
-            overlay.style.filter = 'blur(15px)'; // Stage 1, incorrect answer, set blur to 15px
-        }
+        overlay.style.filter = isCorrect ? 'blur(10px)' : 'blur(15px)';
     } else if (currentStage === 2) {
-        const overlay = document.getElementById('overlay');
         if (isCorrect) {
-            if (overlay.style.filter === 'blur(10px)') {
-                overlay.style.filter = 'blur(7px)'; // Stage 2, correct answer, previous blur 10px -> 7px
-            } else if (overlay.style.filter === 'blur(15px)') {
-                overlay.style.filter = 'blur(10px)'; // Stage 2, correct answer, previous blur 15px -> 10px
-            }
+            overlay.style.filter = overlay.style.filter === 'blur(15px)' ? 'blur(10px)' : 'blur(7px)';
         } else {
-            // Stage 2, incorrect answer, retain or set the blur based on the current value
-            if (overlay.style.filter === 'blur(10px)') {
-                overlay.style.filter = 'blur(10px)'; // No change if blur is already 10px
-            } else if (overlay.style.filter === 'blur(15px)') {
-                overlay.style.filter = 'blur(15px)'; // No change if blur is already 15px
-            }
+            overlay.style.filter = overlay.style.filter || 'blur(15px)';
         }
     }
 
-
-
-    // Proceed to the next stage after a 1-sec delay or show the unblurred image if quiz finished
+    // Proceed to next stage after a delay, or finish the quiz
     setTimeout(() => {
         button.style.backgroundColor = ''; // Reset button color
         if (currentStage === 3) {
-            finishQuiz(isCorrect);
+            finishQuiz(isCorrect); 
         } else {
             proceedToNextStage(); 
         }
     }, 1000);
 }
+
+
+
 
 
 
@@ -363,7 +363,7 @@ async function sendStatsToSheet(isCorrect) {
 
     // Update localStorage
     localStorage.setItem('userStats', JSON.stringify(userStats));
-
+``
     // Send stats to Google Sheet
     await fetch('https://script.google.com/macros/s/AKfycbz9AhROOrjBductLVu_GIG33t5z7Zmbja-PwWbVGC0bNHLA_asp4PO3zf7uZxwnzjUe0w/exec', {
         method: 'POST',
