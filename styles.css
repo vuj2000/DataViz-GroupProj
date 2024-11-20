@@ -1,5 +1,5 @@
 /* Dark Mode */
-body.dark-mode {
+body.dark-mode, body.dark-mode header {
     background-color: #121212;
 }
 body.dark-mode h1, body.dark-mode h2, body.dark-mode p, body.dark-mode button, body.dark-mode .stats-container p {
@@ -16,30 +16,68 @@ body.dark-mode button:hover {
     background-color: #5e5e5e;
 }
 
+
 /* Body */
-body {
-    overflow: auto; 
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; 
 }
-body::-webkit-scrollbar {
+body{
+    background-color: #f0f0f0;
+}
+.container {
+    height: 100%;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+}
+.screen {
+    height: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+.screen-1 {
+    background-color: transparent;
+}
+.screen-2 {
+    background-color: transparent;
+    justify-content: center;
+}
+
+
+
+/* Scrollbar */
+.container::-webkit-scrollbar {
     width: 5px; 
 }
-body::-webkit-scrollbar-thumb {
-    background-color: #888; /* Set color of the scrollbar */
-    border-radius: 10px; /* Round the scrollbar thumb */
+.container::-webkit-scrollbar-thumb {
+    background-color: #888; 
+    border-radius: 10px; 
 }
-body::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Darker thumb color on hover */
+.container::-webkit-scrollbar-thumb:hover {
+    background-color: #555; 
 }
 
 /* Paragraph Styles */
 header {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0; 
+    z-index: 100; 
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
 }
 h1 {
     font-size: 3rem;
     font-weight: 800;
     letter-spacing: -1px;
-    margin-top: 20px;
+    margin-top: 15px;
     margin-bottom: 0;
     font-family: 'Roboto', sans-serif;
     text-align: center;
@@ -61,6 +99,7 @@ h1, h2 {
     text-align: center;
 }
 P {
+    text-align: center;
     font-family: 'Roboto', sans-serif;
     line-height: 1.5;
     margin: 0;
@@ -73,12 +112,13 @@ P {
     font-weight: 600;
     color: #a0a0a0;
 }
+#attempts, #wins, #win-rate {
+    font-weight: 900;
+}
 
+/* Dark Mode Button */
 .option {
-    position: absolute;
-    right: 15%; 
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
     padding: 5px 5px;
     cursor: pointer;
 }
@@ -98,9 +138,8 @@ P {
 }
 
 #movie-info img {
-    width: 100%;
-    max-width: 500px;
-    height: auto;
+    height: 300px;
+    width: auto;
 }
 #movie-info {
     position: relative; 

@@ -148,9 +148,7 @@ async function updateChoicesForTitle() {
     document.getElementById('choices').innerHTML = titleButtons;
 }
 
-
-
-// Proceed to the next stage
+// Proceeding to the next stage
 async function proceedToNextStage() {
     currentStage++;
     if (currentStage === 2) {
@@ -167,14 +165,29 @@ function resetQuiz() {
     currentStage = 1;
     correctGenreGuessed = false;
     correctYearGuessed = false;
+
+    // Reset instructions
     document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre';
+
+    // Clear choices
     document.getElementById('choices').innerHTML = '';
-    updateMovieInfo(); 
-    updateChoices(); // Update the choices for the genre stage
+
+    // Reset feedback to tips
+    document.getElementById('feedback-genre').innerText = 'Tip 1: Guess the genre of the movie!';
+    document.getElementById('feedback-year').innerText = 'Tip 2: Guess the year the movie was released!';
+
+    // Update movie info and choices for the first stage
+    updateMovieInfo();
+    updateChoices();
 }
 
 
+// Initialize tips for feedback and blur value
+document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+document.getElementById('feedback-year').innerText = 'Tip 2: Year';
 let blurValue = 10;
+
+
 // Track win/loss and remove blur on correct answer
 function checkAnswer(button, selectedAnswer) {
     let isCorrect = false;
@@ -184,7 +197,7 @@ function checkAnswer(button, selectedAnswer) {
         // Stage 1: Genre 
         isCorrect = genreList.some(genre => genre.name === selectedAnswer && currentMovie.genre_ids.includes(genre.id));
         correctGenreGuessed = isCorrect;
-        feedbackText = isCorrect ? `The genre is ${selectedAnswer}` : `The genre is NOT ${selectedAnswer}`;
+        feedbackText = isCorrect ? `Tip 1: The genre is ${selectedAnswer}` : `Tip 1: The genre is NOT ${selectedAnswer}`;
 
         // Update the genre feedback
         const feedbackGenreDiv = document.getElementById('feedback-genre');
@@ -196,7 +209,7 @@ function checkAnswer(button, selectedAnswer) {
         const correctYear = currentMovie.release_date.split('-')[0];
         isCorrect = selectedYear === correctYear;
         correctYearGuessed = isCorrect;
-        feedbackText = isCorrect ? `It was released in ${selectedYear}` : `It was NOT released in ${selectedYear}`;
+        feedbackText = isCorrect ? `Tip 2: It was released in ${selectedYear}` : `Tip 2: It was NOT released in ${selectedYear}`;
 
         // Update the year feedback
         const feedbackYearDiv = document.getElementById('feedback-year');
@@ -235,13 +248,10 @@ function checkAnswer(button, selectedAnswer) {
     // Change button colors
     button.style.backgroundColor = isCorrect ? '#ccfff2' : '#ffeaea';
     button.style.borderColor = isCorrect ? '#339999' : '#ea696c';
+    button.style.color = isCorrect ? '#339999' : '#ea696c';
 
 
-
-
-
-
-    // Blur function
+    // Blur function------------important
     if (currentStage === 3) {
         // Always set blur to 0px if currentStage is 3
         const overlay = document.getElementById('overlay');
@@ -273,7 +283,7 @@ function checkAnswer(button, selectedAnswer) {
 
 
 
-    // Proceed to the next stage after a short delay or show the unblurred image if quiz finished
+    // Proceed to the next stage after a 1-sec delay or show the unblurred image if quiz finished
     setTimeout(() => {
         button.style.backgroundColor = ''; // Reset button color
         if (currentStage === 3) {
