@@ -108,11 +108,32 @@ async function updateMovieInfo() {
 // Updating Choices for Each Stage
 function updateChoicesForGenre() {
     if (currentStage === 1) {
-        const shuffledGenres = genreList.sort(() => 0.5 - Math.random()).slice(0, 4);
-        const genreChoices = shuffledGenres.map(
-            genre => `<button onclick="checkAnswer(this, '${genre.name}')">${genre.name}</button>`
-        ).join('');
-        document.getElementById('choices').innerHTML = genreChoices;
+        if (currentMovie && currentMovie.genre_ids && Array.isArray(currentMovie.genre_ids)) {
+            // Map the genre IDs from the movie to their corresponding names
+            const genreNames = currentMovie.genre_ids.map(genreId => {
+                const genre = genreList.find(g => g.id === genreId);
+                return genre ? genre.name : 'Unknown Genre';
+            });
+
+            const correctGenre = genreNames[0]; // Assuming the first genre is the correct one
+            console.log('Correct Genre:', correctGenre);
+
+            // Now we need to shuffle and create the choices for genre
+            const shuffledGenres = genreList
+                .filter(genre => genreNames.indexOf(genre.name) === -1) // Exclude the correct genre
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3); // Get 3 other random genres
+
+            // Include the correct genre and shuffle the final list
+            const allGenres = [correctGenre, ...shuffledGenres.map(genre => genre.name)];
+            const genreChoices = allGenres.sort(() => 0.5 - Math.random()).map(
+                genre => `<button onclick="checkAnswer(this, '${genre}')">${genre}</button>`
+            ).join('');
+
+            document.getElementById('choices').innerHTML = genreChoices;
+        } else {
+            console.log('Genres are missing or incorrectly formatted');
+        }
     }
 }
 
@@ -129,8 +150,8 @@ function updateChoicesForYear() {
     ).join('');
     
     document.getElementById('choices').innerHTML = yearChoices;
+    console.log('Correct Year:', correctYear);
 }
-
 
 async function updateChoicesForTitle() {
     const topMovies = await getTop2000RatedPopularMovies();
