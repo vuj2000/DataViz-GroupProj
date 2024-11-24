@@ -108,11 +108,32 @@ async function updateMovieInfo() {
 // Updating Choices for Each Stage
 function updateChoicesForGenre() {
     if (currentStage === 1) {
-        const shuffledGenres = genreList.sort(() => 0.5 - Math.random()).slice(0, 4);
-        const genreChoices = shuffledGenres.map(
-            genre => `<button onclick="checkAnswer(this, '${genre.name}')">${genre.name}</button>`
-        ).join('');
-        document.getElementById('choices').innerHTML = genreChoices;
+        if (currentMovie && currentMovie.genre_ids && Array.isArray(currentMovie.genre_ids)) {
+            // Map the genre IDs from the movie to their corresponding names
+            const genreNames = currentMovie.genre_ids.map(genreId => {
+                const genre = genreList.find(g => g.id === genreId);
+                return genre ? genre.name : 'Unknown Genre';
+            });
+
+            const correctGenre = genreNames[0]; // Assuming the first genre is the correct one
+            console.log('Correct Genre:', correctGenre);
+
+            // Now we need to shuffle and create the choices for genre
+            const shuffledGenres = genreList
+                .filter(genre => genreNames.indexOf(genre.name) === -1) // Exclude the correct genre
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3); // Get 3 other random genres
+
+            // Include the correct genre and shuffle the final list
+            const allGenres = [correctGenre, ...shuffledGenres.map(genre => genre.name)];
+            const genreChoices = allGenres.sort(() => 0.5 - Math.random()).map(
+                genre => `<button onclick="checkAnswer(this, '${genre}')">${genre}</button>`
+            ).join('');
+
+            document.getElementById('choices').innerHTML = genreChoices;
+        } else {
+            console.log('Genres are missing or incorrectly formatted');
+        }
     }
 }
 
@@ -129,8 +150,8 @@ function updateChoicesForYear() {
     ).join('');
     
     document.getElementById('choices').innerHTML = yearChoices;
+    console.log('Correct Year:', correctYear);
 }
-
 
 async function updateChoicesForTitle() {
     const topMovies = await getTop2000RatedPopularMovies();
@@ -158,50 +179,45 @@ async function proceedToNextStage() {
         document.getElementById('stage-instruction').innerText = 'Final Stage: Guess the movie!';
         updateChoicesForTitle(); 
     } 
+    console.log(`Current stage: ${currentStage}`);
 }
 
 // Resetting the Quiz
 function resetQuiz() {
-    // Update movie info and choices for the first stage
-    updateMovieInfo();
-    updateChoicesForGenre();
+    // Add a 0.5-second delay before executing the reset logic
+    setTimeout(() => {
+        // Update movie info and choices for the first stage
+        updateMovieInfo();
+        updateChoicesForGenre();
 
-    // Reset stage-related variables
-    currentStage = 1;
-    correctGenreGuessed = false;
-    correctYearGuessed = false;
+        // Reset stage-related variables
+        currentStage = 1;
+        correctGenreGuessed = false;
+        correctYearGuessed = false;
 
-    // Reset instructions and feedback text
-    document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre!';
-    document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
-    document.getElementById('feedback-year').innerText = 'Tip 2: Year';
-    
-    // Reset the choices container
-    document.getElementById('choices').innerHTML = '';
+        // Reset instructions and feedback text
+        document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre!';
+        document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+        document.getElementById('feedback-year').innerText = 'Tip 2: Year';
 
-    // Reset any blur effects (optional)
-    document.getElementById('overlay').style.filter = 'blur(10px)';
+        // Reset the choices container
+        document.getElementById('choices').innerHTML = '';
 
-    // Reset feedback sections
-    document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
-    document.getElementById('feedback-year').innerText = 'Tip 2: Year';
-    
-    // Reset additional quiz state
-    blurValue = 10;  // Optional: reset blur value to its starting state
-    overlay.style.filter = 'blur(10px)';
-    
-    // Optionally, re-enable any other features like buttons or next steps
-    // For example: make sure buttons are active again (if relevant)
-    enableButtons();  // This is an example; replace with your button-enabling logic if needed
+        // Reset any blur effects (optional)
+        document.getElementById('overlay').style.filter = 'blur(10px)';
+
+        // Reset feedback sections
+        document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+        document.getElementById('feedback-year').innerText = 'Tip 2: Year';
+
+        // Reset additional quiz state
+        blurValue = 10;  // Optional: reset blur value to its starting state
+        overlay.style.filter = 'blur(10px)';
+        console.log(`Reset to stage ${currentStage}`);
+    }, 500); // 500 milliseconds (0.5 seconds) delay
 }
 
-// Function to handle enabling buttons, if you have one
-function enableButtons() {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-        button.disabled = false; // Enable buttons if previously disabled
-    });
-}
+
 
 
 
