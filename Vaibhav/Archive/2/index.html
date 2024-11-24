@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUE KNEW?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Hue Knew?</h1>
+        <h2>The Ultimate Movie Quiz</h2>
+    </header>
+    <div class="container">
+        <div class="screen screen-1">
+            <br><br><br><br><br>
+            <div id="quiz-container">
+                <div id="mode-settings" style="margin-top: 20px; padding: 25px; border: 2px solid #444; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); background-color: #ffffff; width: 100%; max-width: 600px;">
+                    <h3 style="font-family: 'Roboto', sans-serif; font-size: 1.8rem; font-weight: bold; color: #333; margin-bottom: 15px;">Choose Your Play Mode</h3>
+                    <select id="mode-selector" onchange="selectMode()" style="padding: 10px; font-size: 1.1rem; border-radius: 10px; border: 2px solid #333; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; margin: 10px auto;">
+                        <option value="none" selected>None</option>
+                        <option value="timer">⏱️ 1-Min Timer Mode</option>
+                        <option value="three-lives">💔 Three Lives Mode</option>
+                        <option value="infinite-play">♾️ Infinite Play Mode</option>
+                    </select>
+                    <div id="settings-content" style="margin-top: 20px;"></div>
+                </div>
+                <br>
+                <div id="movie-info"></div>
+                <div id="overlay"></div>
+
+                <br><br>
+                <h2 id="stage-instruction">Stage 1: Guess the genre!</h2>
+
+                <div id="choices"></div>
+                <br>
+                <div id="feedback-genre"></div>
+                <div id="feedback-year"></div>
+            </div>
+        </div>
+
+        <div id="screen-2" class="screen screen-2">
+            <div class="stats-container">
+                <h1>My Stats</h1>
+                <p>Attempts: <span id="attempts">0</span></p>
+                <p>Wins: <span id="wins">0</span></p>
+                <p>Win Rate: <span id="win-rate">0</span><b>%</b></p>
+                <br>
+                <p>Also log the wins/losses for the first two quizzes and do a simple chart to compare the three</p>
+            </div>
+
+            <h2>Created by:</h2>
+            <p>Hao Lee, Julia Kwon, and Vaibhav Jain</p>
+            <br><br>
+            <h2>Final project for:</h2>
+            <p>Data Visualization for Architecture, Urbanism, and the Humanities (2024)</p>
+            <p>Columbia University Graduate School of Architecture, Planning, and Preservation (GSAPP)</p>
+            <p>Instructor: Jia Zhang</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

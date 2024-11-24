@@ -13,52 +13,100 @@
     <header>
         <h1>Hue Knew?</h1>
         <h2>The Ultimate Movie Quiz</h2>
+        <nav>
+            <ul class="nav-tabs">
+                <li><a href="#" onclick="showScreen('play')">PLAY</a></li>
+                <li><a href="#" onclick="showScreen('settings')">SETTINGS</a></li>
+                <li><a href="#" onclick="showScreen('statistics')">STATISTICS</a></li>
+            </ul>
+        </nav>
     </header>
-    <div class="container">
-        <div class="screen screen-1">
-            <br><br><br><br><br>
-            <div id="quiz-container">
-                <div id="mode-settings" style="margin-top: 20px; padding: 25px; border: 2px solid #444; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); background-color: #ffffff; width: 100%; max-width: 600px;">
-                    <h3 style="font-family: 'Roboto', sans-serif; font-size: 1.8rem; font-weight: bold; color: #333; margin-bottom: 15px;">Choose Your Play Mode</h3>
-                    <select id="mode-selector" onchange="selectMode()" style="padding: 10px; font-size: 1.1rem; border-radius: 10px; border: 2px solid #333; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; margin: 10px auto;">
-                        <option value="none" selected>None</option>
-                        <option value="timer">⏱️ 1-Min Timer Mode</option>
-                        <option value="three-lives">💔 Three Lives Mode</option>
-                        <option value="infinite-play">♾️ Infinite Play Mode</option>
-                    </select>
-                    <div id="settings-content" style="margin-top: 20px;"></div>
-                </div>
-                <br>
+    <div class="container" style="padding-top: 150px; display: flex; flex-direction: column; align-items: center;">
+        <!-- Default Screen -->
+        <div id="screen-default" class="screen" style="text-align: center;">
+            <h2>Project Details</h2>
+            <h3>Created by:</h3>
+            <p>Hao Lee, Julia Kwon, and Vaibhav Jain</p>
+            <h3>Final project for:</h3>
+            <p>Data Visualization for Architecture, Urbanism, and the Humanities (2024)</p>
+            <p>Columbia University Graduate School of Architecture, Planning, and Preservation (GSAPP)</p>
+            <p>Instructor: Jia Zhang</p>
+        </div>
+
+        <!-- Play Screen -->
+        <div id="screen-play" class="screen" style="display: none; text-align: center;">
+            <div id="quiz-container" class="quiz-center">
                 <div id="movie-info"></div>
                 <div id="overlay"></div>
-
-                <br><br>
                 <h2 id="stage-instruction">Stage 1: Guess the genre!</h2>
-
                 <div id="choices"></div>
-                <br>
                 <div id="feedback-genre"></div>
                 <div id="feedback-year"></div>
             </div>
         </div>
 
-        <div id="screen-2" class="screen screen-2">
-            <div class="stats-container">
+        <!-- Settings Screen -->
+        <div id="screen-settings" class="screen" style="display: none; text-align: center;">
+            <div class="settings-container" style="max-width: 400px; margin: 0 auto;">
+                <!-- Gameplay Variations -->
+                <div class="settings-section">
+                    <h3>Mode 1: Gameplay Variations</h3>
+                    <div class="quiz-modes">
+                        <button class="mode-button" onclick="selectMode(this, 'timed')">
+                            <div class="mode-symbol">⏱️</div>
+                            <div class="mode-title">1-Min Timer Mode</div>
+                        </button>
+                        <button class="mode-button" onclick="selectMode(this, 'threeLives')">
+                            <div class="mode-symbol">💔</div>
+                            <div class="mode-title">Three Lives Mode</div>
+                        </button>
+                        <button class="mode-button" onclick="selectMode(this, 'infinite')">
+                            <div class="mode-symbol">♾️</div>
+                            <div class="mode-title">Infinite Play Mode</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Display Themes -->
+                <div class="settings-section">
+                    <h3>Mode 2: Display Themes</h3>
+                    <div class="quiz-modes">
+                        <button class="mode-button" onclick="selectTheme(this, 'dark')">
+                            <div class="mode-symbol">🌒</div>
+                            <div class="mode-title">Dark Mode</div>
+                        </button>
+                        <button class="mode-button" onclick="selectTheme(this, 'light')">
+                            <div class="mode-symbol">☀</div>
+                            <div class="mode-title">Light Mode</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Difficulty Levels -->
+                <div class="settings-section">
+                    <h3>Mode 3: Difficulty Levels</h3>
+                    <div class="quiz-modes">
+                        <button class="mode-button" onclick="selectDifficulty(this, 'easy')">
+                            <div class="mode-symbol">🟢</div>
+                            <div class="mode-title">Easy Mode</div>
+                        </button>
+                        <button class="mode-button" onclick="selectDifficulty(this, 'hard')">
+                            <div class="mode-symbol">🔴</div>
+                            <div class="mode-title">Hard Mode</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Screen -->
+        <div id="screen-statistics" class="screen" style="display: none; text-align: center;">
+            <div class="stats-container" style="max-width: 90%; margin: 0 auto;">
                 <h1>My Stats</h1>
                 <p>Attempts: <span id="attempts">0</span></p>
                 <p>Wins: <span id="wins">0</span></p>
                 <p>Win Rate: <span id="win-rate">0</span><b>%</b></p>
-                <br>
-                <p>Also log the wins/losses for the first two quizzes and do a simple chart to compare the three</p>
             </div>
-
-            <h2>Created by:</h2>
-            <p>Hao Lee, Julia Kwon, and Vaibhav Jain</p>
-            <br><br>
-            <h2>Final project for:</h2>
-            <p>Data Visualization for Architecture, Urbanism, and the Humanities (2024)</p>
-            <p>Columbia University Graduate School of Architecture, Planning, and Preservation (GSAPP)</p>
-            <p>Instructor: Jia Zhang</p>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>

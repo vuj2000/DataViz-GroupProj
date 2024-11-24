@@ -1,13 +1,18 @@
 function selectMode(button) {
-    // Reset styles for all buttons in the same mode
-    const modeContainer = button.closest('.quiz-modes');
-    const buttons = modeContainer.querySelectorAll('.mode-button');
+    // Reset styles for all buttons
+    const buttons = document.querySelectorAll('.quiz-modes button');
     buttons.forEach(btn => {
         btn.classList.remove('selected-mode');
+        btn.style.borderColor = 'rgb(234, 234, 234)';
+        btn.style.boxShadow = 'none';
+        btn.style.fontWeight = 'normal';
     });
     
     // Apply selected styles to the clicked button
     button.classList.add('selected-mode');
+    button.style.borderColor = 'black'; /* Black border to indicate selection */
+    button.style.boxShadow = '0 0 15px black'; /* Black glow effect */
+    button.style.fontWeight = 'bold';
 }
 
 // Function to show different screens based on tab selection
@@ -20,84 +25,12 @@ function showScreen(screenName) {
     // Display the chosen screen
     if (screenName === 'play') {
         document.getElementById('screen-play').style.display = 'flex';
-        updateMovieInfo(); // Update movie info when entering the play screen
     } else if (screenName === 'settings') {
         document.getElementById('screen-settings').style.display = 'flex';
+        // Show the Choose Your Play Mode box in settings
+        document.querySelector('.play-mode-box').style.display = 'block';
     } else if (screenName === 'statistics') {
         document.getElementById('screen-statistics').style.display = 'flex';
-    }
-}
-
-// Update settings options in settings tab
-function updateSettingsOptions() {
-    const settingsContainer = document.getElementById('settings-container');
-    settingsContainer.innerHTML = `
-        <h3>Mode 1: Gameplay Variations</h3>
-        <div class="quiz-modes">
-            <button class="mode-button" onclick="selectMode(this); startTimedMode()">
-                <div class="mode-symbol">⏱️</div>
-                <div class="mode-title">1-Min Timer Mode</div>
-                <div class="mode-subtitle">Race Against Time</div>
-            </button>
-            <button class="mode-button" onclick="selectMode(this); startThreeLivesMode()">
-                <div class="mode-symbol">💔</div>
-                <div class="mode-title">Three Lives Mode</div>
-                <div class="mode-subtitle">Triple Take</div>
-            </button>
-            <button class="mode-button" onclick="selectMode(this); startNoLimitMode()">
-                <div class="mode-symbol">♾️</div>
-                <div class="mode-title">Infinite Play Mode</div>
-                <div class="mode-subtitle">Endless Reel</div>
-            </button>
-        </div>
-
-        <h3>Mode 2: Display Themes</h3>
-        <div class="quiz-modes">
-            <button class="mode-button" onclick="selectMode(this); selectTheme('dark')">
-                <div class="mode-symbol">🌒</div>
-                <div class="mode-title">Dark Mode</div>
-                <div class="mode-subtitle">Night Screening</div>
-            </button>
-            <button class="mode-button" onclick="selectMode(this); selectTheme('light')">
-                <div class="mode-symbol">☀</div>
-                <div class="mode-title">Light Mode</div>
-                <div class="mode-subtitle">Day Matinee</div>
-            </button>
-        </div>
-
-        <h3>Mode 3: Difficulty Levels</h3>
-        <div class="quiz-modes">
-            <button class="mode-button" onclick="selectMode(this); selectDifficulty('easy')">
-                <div class="mode-symbol">🟢</div>
-                <div class="mode-title">Easy Mode</div>
-                <div class="mode-subtitle">Casual Viewing</div>
-            </button>
-            <button class="mode-button" onclick="selectMode(this); selectDifficulty('hard')">
-                <div class="mode-symbol">🔴</div>
-                <div class="mode-title">Hard Mode</div>
-                <div class="mode-subtitle">Director’s Cut</div>
-            </button>
-        </div>
-    `;
-}
-
-// Function to select display theme
-function selectTheme(theme) {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.body.classList.remove('light-mode');
-    } else if (theme === 'light') {
-        document.body.classList.add('light-mode');
-        document.body.classList.remove('dark-mode');
-    }
-}
-
-// Function to select difficulty level
-function selectDifficulty(level) {
-    if (level === 'easy') {
-        console.log('Easy mode selected');
-    } else if (level === 'hard') {
-        console.log('Hard mode selected');
     }
 }
 
@@ -260,6 +193,13 @@ function resetQuiz() {
     updateChoicesForGenre();
 }
 
+
+// Initialize tips for feedback and blur value
+document.getElementById('feedback-genre').innerText = 'Tip 1: Genre';
+document.getElementById('feedback-year').innerText = 'Tip 2: Year';
+let blurValue = 10;
+
+
 // Track win/loss and remove blur on correct answer
 function checkAnswer(button, selectedAnswer) {
     let isCorrect = false;
@@ -287,31 +227,79 @@ function checkAnswer(button, selectedAnswer) {
         const feedbackYearDiv = document.getElementById('feedback-year');
         feedbackYearDiv.innerHTML = feedbackText;
     } else if (currentStage === 3) {
-        // Final Stage: Title
-        isCorrect = selectedAnswer === currentMovie.title;
-        const message = isCorrect ? `Congratulations! The movie was "${currentMovie.title}"!` : `Oops! The movie was "${currentMovie.title}".`;
-
-        // Display final result
+        // Arrays for different responses
+        const quizFinishedMessages = [
+            `Quiz Finished! The movie is "${currentMovie.title}"!`,
+            `Congratulations! The movie was "${currentMovie.title}"!`,
+            `Well done! The movie was "${currentMovie.title}"!`
+        ];
+    
+        const incorrectMessages = [
+            `Incorrect! The movie is "${currentMovie.title}".`,
+            `Oops! The movie was "${currentMovie.title}".`,
+            `Wrong guess! The movie is "${currentMovie.title}".`
+        ];
+    
+        // Determine if the selected answer is correct
+        let isCorrect = false;
+        if (selectedAnswer === currentMovie.title) {
+            isCorrect = true; // The answer is correct
+            message = quizFinishedMessages[Math.floor(Math.random() * quizFinishedMessages.length)];
+        } else {
+            isCorrect = false; // The answer is incorrect
+            message = incorrectMessages[Math.floor(Math.random() * incorrectMessages.length)];
+        }
+        
+        // Display the randomly chosen message
         document.getElementById('stage-instruction').innerText = message;
-
+    
         // Add "Retry?" button
         document.getElementById('choices').innerHTML = `
             <button onclick="resetQuiz()">Retry?</button>
         `;
+    
+        // Optionally, pass isCorrect to update stats
+        finishQuiz(isCorrect);  // Assuming you have a function to handle stats or feedback
     }
+    
 
     // Change button colors
     button.style.backgroundColor = isCorrect ? '#ccfff2' : '#ffeaea';
     button.style.borderColor = isCorrect ? '#339999' : '#ea696c';
     button.style.color = isCorrect ? '#339999' : '#ea696c';
 
-    // Blur function for incorrect answers
-    if (currentStage !== 3) {
+
+    // Blur function------------important
+    if (currentStage === 3) {
+        // Always set blur to 0px if currentStage is 3
         const overlay = document.getElementById('overlay');
-        overlay.style.filter = isCorrect ? 'blur(10px)' : 'blur(15px)';
+        overlay.style.filter = 'blur(0px)';
+    } else if (currentStage === 1) {
+        const overlay = document.getElementById('overlay');
+        if (isCorrect) {
+            overlay.style.filter = 'blur(10px)'; // Stage 1, correct answer, set blur to 10px
+        } else {
+            overlay.style.filter = 'blur(15px)'; // Stage 1, incorrect answer, set blur to 15px
+        }
+    } else if (currentStage === 2) {
+        const overlay = document.getElementById('overlay');
+        if (isCorrect) {
+            if (overlay.style.filter === 'blur(10px)') {
+                overlay.style.filter = 'blur(7px)'; // Stage 2, correct answer, previous blur 10px -> 7px
+            } else if (overlay.style.filter === 'blur(15px)') {
+                overlay.style.filter = 'blur(10px)'; // Stage 2, correct answer, previous blur 15px -> 10px
+            }
+        } else {
+            // Stage 2, incorrect answer, retain or set the blur based on the current value
+            if (overlay.style.filter === 'blur(10px)') {
+                overlay.style.filter = 'blur(10px)'; // No change if blur is already 10px
+            } else if (overlay.style.filter === 'blur(15px)') {
+                overlay.style.filter = 'blur(15px)'; // No change if blur is already 15px
+            }
+        }
     }
 
-    // Proceed to the next stage after a delay
+    // Proceed to the next stage after a 1-sec delay or show the unblurred image if quiz finished
     setTimeout(() => {
         button.style.backgroundColor = ''; // Reset button color
         if (currentStage === 3) {
@@ -322,6 +310,7 @@ function checkAnswer(button, selectedAnswer) {
     }, 1000);
 }
 
+// Stats----------------------------------------------------------
 // Function to display the latest stats on page load
 function displayStats() {
     const userStats = JSON.parse(localStorage.getItem('userStats')) || { attempts: 0, wins: 0, winRate: 0 };
@@ -330,6 +319,9 @@ function displayStats() {
     document.getElementById('wins').innerText = userStats.wins;
     document.getElementById('win-rate').innerText = userStats.winRate.toFixed(2);
 }
+
+// Call displayStats when the page loads to show the latest stats
+window.onload = displayStats;
 
 // When the quiz is complete (final stage/guess)
 function finishQuiz(isCorrect) {
@@ -362,8 +354,29 @@ function updateStats(isCorrect) {
     document.getElementById('win-rate').innerText = userStats.winRate.toFixed(2);
 }
 
-// Call displayStats when the page loads to show the latest stats
-window.onload = displayStats;
+// Google Sheets Func.
+async function sendStatsToSheet(isCorrect) {
+    const userStats = JSON.parse(localStorage.getItem('userStats')) || { attempts: 0, wins: 0, winRate: 0 };
 
-// Start the quiz
+    // Increment attempts and wins based on the result
+    userStats.attempts++;
+    if (isCorrect) {
+        userStats.wins++;
+    }
+    userStats.winRate = userStats.attempts > 0 ? (userStats.wins / userStats.attempts) * 100 : 0;
+
+    // Update localStorage
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // Send stats to Google Sheet
+    await fetch('https://script.google.com/macros/s/AKfycbz9AhROOrjBductLVu_GIG33t5z7Zmbja-PwWbVGC0bNHLA_asp4PO3zf7uZxwnzjUe0w/exec', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userStats),
+    });
+}
+
+// Start the quiz-------------------------------------------
 updateMovieInfo();
