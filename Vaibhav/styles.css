@@ -469,18 +469,22 @@ body.light-mode {
     background-color: #f0f0f0;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 600px;
+    width: 450px;
+    height: 100px; /* Ensure fixed height for settings preview box */
     font-family: 'Roboto', sans-serif;
     color: #555;
+    overflow: hidden; /* Hide overflow content */
 }
+
 .settings-preview {
     text-align: center;
-    margin: 20px auto;
+    margin: 50px auto;
     padding: 15px;
     background-color: #f0f0f0; /* Light background for contrast */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+   
+
     width: 90%; /* Responsive width */
     max-width: 450px; /* Max width to match other containers */
 }

@@ -39,11 +39,9 @@
 
         <!-- Play Screen -->
         <div id="screen-play" class="screen" style="display: none; text-align: center;">
-            <div id="settings-preview-box" style="width: 100%; max-width: 600px; padding: 20px; margin-bottom: 20px; border: 2px solid #333; border-radius: 10px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; font-family: 'Roboto', sans-serif; font-size: 1rem; color: #555;">
-    <p id="selected-settings">Select a Gameplay Mode</p>
-</div>
-
-
+            <div id="settings-preview-box" style="width: 450px; height: 100px; padding: 20px; margin-bottom: 20px; border: 2px solid #333; border-radius: 10px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative;">
+                <p id="selected-settings">Select a Gameplay Mode</p>
+            </div>
 
             <div id="quiz-container" class="quiz-center" style="width: 100%; max-width: 450px;">
                 <div id="movie-info" style="width: 90%; max-width: 300px; margin: 0 auto; display: flex; justify-content: center; align-items: center; height: auto;"></div>
@@ -54,7 +52,6 @@
                 <div id="feedback-year" style="width: 100%; max-width: 450px; margin: 0 auto;"></div>
             </div>
         </div>
-
 
         <!-- Settings Screen -->
         <div id="screen-settings" class="screen" style="display: none; text-align: center;">
@@ -81,7 +78,7 @@
                 <!-- Display Themes -->
                 <div class="settings-section">
                     <h3>Mode 2: Display Themes</h3>
-                    <div class="quiz-modes">
+                    <div class="quiz-modes" style="display: flex; flex-wrap: wrap; justify-content: space-between; width: 100%; box-sizing: border-box; gap: 5px;">
                         <button class="mode-button" onclick="selectMode(this); selectTheme('dark')">
                             <div class="mode-symbol">🌒</div>
                             <div class="mode-title">Dark Mode</div>
@@ -96,7 +93,7 @@
                 <!-- Difficulty Levels -->
                 <div class="settings-section">
                     <h3>Mode 3: Difficulty Levels</h3>
-                    <div class="quiz-modes">
+                    <div class="quiz-modes" style="display: flex; flex-wrap: wrap; justify-content: space-between; width: 100%; box-sizing: border-box; gap: 5px;">
                         <button class="mode-button" onclick="selectMode(this); selectDifficulty('easy')">
                             <div class="mode-symbol">🟢</div>
                             <div class="mode-title">Easy Mode</div>
