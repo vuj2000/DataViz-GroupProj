@@ -3,6 +3,7 @@ function selectMode(button) {
         showTimedModeSettingsPreview();
     } else if (button.dataset.mode === 'threeLives') {
         showThreeLivesModeSettingsPreview();
+        startThreeLivesMode();
     } else if (button.dataset.mode === 'infinite') {
         showInfinitePlayModeSettingsPreview();
     }
@@ -44,6 +45,7 @@ function startTimer() {
     document.getElementById('timer-display').innerText = `${timeLeft}`;
     document.getElementById('movie-info').style.display = 'flex';
     document.getElementById('movie-info').style.justifyContent = 'center';
+    
     document.getElementById('movie-info').style.alignItems = 'center';
     document.getElementById('stage-instruction').style.display = 'block';
     document.getElementById('choices').style.display = 'block';
@@ -81,7 +83,7 @@ function showThreeLivesModeSettingsPreview() {
         <p>Three Lives Mode</p>
         <div style="display: flex; width: 100%;">
             <div id="lives-display" style="flex: 1; text-align: center; font-size: 2rem;">❤❤❤</div>
-            <button style="flex: 1; width: 50%;" onclick="startThreeLivesMode()">Start/Reset</button>
+            <button style="flex: 1; width: 50%;" onclick="resetThreeLivesMode()">Start/Reset</button>
         </div>
     `;
 }
@@ -106,9 +108,6 @@ function loseLife() {
         for (let i = 0; i < lives; i++) {
             hearts += '❤';
         }
-        for (let i = lives; i < 3; i++) {
-            hearts += '💔';
-        }
         document.getElementById('lives-display').innerText = hearts;
     }
     if (lives === 0) {
@@ -118,18 +117,6 @@ function loseLife() {
 }
 
 function resetThreeLivesMode() {
-    if (lives !== 3) {
-        lives = 3;
-        document.getElementById('lives-display').innerText = '❤❤❤';
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('stage-instruction').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
-    } else {
-        startThreeLivesMode();
-    }
-
     lives = 3;
     document.getElementById('lives-display').innerText = '❤❤❤';
     document.getElementById('movie-info').style.display = 'none';
@@ -265,7 +252,6 @@ function selectDifficulty(level) {
         console.log('Hard mode selected');
     }
 }
-
 
 // Quiz Logic Part 1------------------------------------------------------
 const API_KEY = '3be2bc8a9d8fab379812442e317a4a99'; 

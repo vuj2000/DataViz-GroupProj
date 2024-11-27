@@ -19,21 +19,30 @@ function selectMode(button) {
         });
     });
     
-    // Apply selected styles to the clicked button
-    button.classList.add('selected-mode');
-    button.style.backgroundColor = '#4CAF50'; // Green background for selected
-    button.style.borderColor = '#2e7d32'; // Darker green border
-    button.style.color = 'white'; // White text
-    button.style.boxShadow = '0px 0px 15px rgba(76, 175, 80, 0.6)'; // Glow effect
+   // Apply selected styles to the clicked button
+   button.classList.add('selected-mode');
+   button.style.backgroundColor = '#4CAF50'; // Green background for selected
+   button.style.borderColor = '#2e7d32'; // Darker green border
+   button.style.color = 'white'; // White text
+   button.style.boxShadow = '0px 0px 15px rgba(76, 175, 80, 0.6)'; // Glow effect
+
+   
+    // Check if none of the modes are selected
+    const selectedMode = document.querySelector('.mode-button.selected-mode');
+    const previewBox = document.getElementById('settings-preview-box');
+    if (!selectedMode) {
+        previewBox.innerHTML = "<p>Select a Gameplay Mode</p>";
+    }
 }
 
+// Function to show timed mode settings preview
 function showTimedModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
     previewBox.innerHTML = `
         <p>1-Min Timer Mode</p>
         <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
             <div id="timer-display" style="flex: 1; text-align: center;">60</div>
-            <button style="flex: 1;" onclick="resetTimer()">Start/Reset</button>
+            <button style="flex: 1;" onclick="resetTimer()">Start/Restart</button>
         </div>
     `;
 }
@@ -42,103 +51,40 @@ let timer;
 function startTimer() {
     let timeLeft = 60;
     document.getElementById('timer-display').innerText = `${timeLeft}`;
-    document.getElementById('movie-info').style.display = 'flex';
-    document.getElementById('movie-info').style.justifyContent = 'center';
-    document.getElementById('movie-info').style.alignItems = 'center';
-    document.getElementById('stage-instruction').style.display = 'block';
-    document.getElementById('choices').style.display = 'block';
-    document.getElementById('feedback-genre').style.display = 'block';
-    document.getElementById('feedback-year').style.display = 'block';
     timer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer-display').innerText = `${timeLeft}`;
         if (timeLeft <= 0) {
             clearInterval(timer);
-            timer = null;
             alert('Time is up!');
         }
     }, 1000);
 }
 
 function resetTimer() {
-    if (timer) {
-        clearInterval(timer);
-        timer = null;
-        document.getElementById('timer-display').innerText = `60`;
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('stage-instruction').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
-    } else {
-        startTimer();
-    }
+    clearInterval(timer);
+    document.getElementById('timer-display').innerText = `60`;
 }
 
+
+// Function to show 3 lives mode settings preview
 function showThreeLivesModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
     previewBox.innerHTML = `
         <p>Three Lives Mode</p>
         <div style="display: flex; width: 100%;">
-            <div id="lives-display" style="flex: 1; text-align: center; font-size: 2rem;">❤❤❤</div>
-            <button style="flex: 1; width: 50%;" onclick="startThreeLivesMode()">Start/Reset</button>
+            <div style="flex: 1; text-align: center; font-size: 2rem;">❤️❤️❤️</div>
+            <button style="flex: 1; width: 50%;" onclick="resetThreeLivesMode()">Restart</button>
         </div>
     `;
 }
 
-let lives;
-function startThreeLivesMode() {
-    lives = 3;
-    document.getElementById('lives-display').innerText = '❤❤❤';
-    document.getElementById('movie-info').style.display = 'flex';
-    document.getElementById('movie-info').style.justifyContent = 'center';
-    document.getElementById('movie-info').style.alignItems = 'center';
-    document.getElementById('stage-instruction').style.display = 'block';
-    document.getElementById('choices').style.display = 'block';
-    document.getElementById('feedback-genre').style.display = 'block';
-    document.getElementById('feedback-year').style.display = 'block';
-}
-
-function loseLife() {
-    if (lives > 0) {
-        lives--;
-        let hearts = '';
-        for (let i = 0; i < lives; i++) {
-            hearts += '❤';
-        }
-        for (let i = lives; i < 3; i++) {
-            hearts += '💔';
-        }
-        document.getElementById('lives-display').innerText = hearts;
-    }
-    if (lives === 0) {
-        alert('You have lost all your lives!');
-        resetThreeLivesMode();
-    }
-}
-
 function resetThreeLivesMode() {
-    if (lives !== 3) {
-        lives = 3;
-        document.getElementById('lives-display').innerText = '❤❤❤';
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('stage-instruction').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
-    } else {
-        startThreeLivesMode();
-    }
-
-    lives = 3;
-    document.getElementById('lives-display').innerText = '❤❤❤';
-    document.getElementById('movie-info').style.display = 'none';
-    document.getElementById('stage-instruction').style.display = 'none';
-    document.getElementById('choices').style.display = 'none';
-    document.getElementById('feedback-genre').style.display = 'none';
-    document.getElementById('feedback-year').style.display = 'none';
+    alert('Game restarted with 3 lives!');
 }
 
+
+// Function to show infinite play mode settings preview
 function showInfinitePlayModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
     previewBox.innerHTML = `
@@ -154,7 +100,7 @@ function showInfinitePlayModeSettingsPreview() {
                 <option value="100">100 Rounds</option>
                 <option value="infinite">Infinite</option>
             </select>
-            <button style="flex: 1; width: 50%;" onclick="resetInfinitePlayMode()">Start/Reset</button>
+            <button style="flex: 1; width: 50%;" onclick="resetInfinitePlayMode()">Restart</button>
         </div>
     `;
 }
@@ -163,12 +109,15 @@ function resetInfinitePlayMode() {
     alert('Infinite Play Mode restarted!');
 }
 
+// Function to show different screens based on tab selection
 function showScreen(screenName) {
+    // Remove active class from all tab buttons
     const tabButtons = document.querySelectorAll('.nav-tabs a');
     tabButtons.forEach(button => {
         button.classList.remove('active');
     });
 
+    // Add active class to the selected tab button
     const selectedButton = document.querySelector(`.nav-tabs a[data-screen='${screenName}']`);
     if (selectedButton) {
         selectedButton.classList.add('active');
@@ -178,12 +127,9 @@ function showScreen(screenName) {
         screen.style.display = 'none';
     });
 
+    // Display the chosen screen///////////////////////////
     if (screenName === 'play') {
         document.getElementById('screen-play').style.display = 'flex';
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
     } else if (screenName === 'settings') {
         document.getElementById('screen-settings').style.display = 'flex';
         updateSettingsOptions();
@@ -265,7 +211,6 @@ function selectDifficulty(level) {
         console.log('Hard mode selected');
     }
 }
-
 
 // Quiz Logic Part 1------------------------------------------------------
 const API_KEY = '3be2bc8a9d8fab379812442e317a4a99'; 

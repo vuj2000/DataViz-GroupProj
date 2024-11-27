@@ -358,15 +358,6 @@ button:active {
     transform: translateY(0);
 }
 
-#lives-display {
-    font-family: 'Roboto', sans-serif;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #ea696c;
-    text-align: center;
-    margin-top: 20px;
-}
-
 .mode-symbol {
     font-size: 2rem;
 }

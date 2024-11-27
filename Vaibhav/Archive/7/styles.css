@@ -186,20 +186,6 @@ nav {
     text-align: center;
     max-width: 500px;
 }
-
-#feedback-final {
-    width: 100%;
-    max-width: 450px;
-    margin: 20px auto;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-    color: #333;
-}
 #attempts, #wins, #win-rate {
     font-weight: 900;
 }
@@ -356,15 +342,6 @@ button:active {
     background-color: #d1d1d1;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
-}
-
-#lives-display {
-    font-family: 'Roboto', sans-serif;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #ea696c;
-    text-align: center;
-    margin-top: 20px;
 }
 
 .mode-symbol {

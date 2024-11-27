@@ -27,120 +27,165 @@ function selectMode(button) {
     button.style.boxShadow = '0px 0px 15px rgba(76, 175, 80, 0.6)'; // Glow effect
 }
 
+// Function to show timed mode settings preview
 function showTimedModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
+    setFixedSettingsPreviewStyles(previewBox);
     previewBox.innerHTML = `
         <p>1-Min Timer Mode</p>
         <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
             <div id="timer-display" style="flex: 1; text-align: center;">60</div>
-            <button style="flex: 1;" onclick="resetTimer()">Start/Reset</button>
+            <button style="flex: 1;" onclick="startOrResetTimer()">Start/Reset</button>
         </div>
     `;
 }
 
 let timer;
+let timerRunning = false;
+let score = 0;
+let quizStarted = false;
+let lives = 3;
+
+function startOrResetTimer() {
+    if (timerRunning) {
+        clearInterval(timer);
+        timerRunning = false;
+        document.getElementById('timer-display').innerText = `60`;
+        resetQuizDisplay();
+    } else {
+        if (!quizStarted) {
+            startQuiz();
+        }
+        startTimer();
+    }
+}
+
 function startTimer() {
     let timeLeft = 60;
     document.getElementById('timer-display').innerText = `${timeLeft}`;
-    document.getElementById('movie-info').style.display = 'flex';
-    document.getElementById('movie-info').style.justifyContent = 'center';
-    document.getElementById('movie-info').style.alignItems = 'center';
-    document.getElementById('stage-instruction').style.display = 'block';
-    document.getElementById('choices').style.display = 'block';
-    document.getElementById('feedback-genre').style.display = 'block';
-    document.getElementById('feedback-year').style.display = 'block';
     timer = setInterval(() => {
         timeLeft--;
         document.getElementById('timer-display').innerText = `${timeLeft}`;
         if (timeLeft <= 0) {
             clearInterval(timer);
-            timer = null;
-            alert('Time is up!');
+            timerRunning = false;
+            endQuiz();
         }
     }, 1000);
+    timerRunning = true;
 }
 
-function resetTimer() {
-    if (timer) {
-        clearInterval(timer);
-        timer = null;
-        document.getElementById('timer-display').innerText = `60`;
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('stage-instruction').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
-    } else {
-        startTimer();
+function startQuiz() {
+    if (document.querySelector('.mode-button.selected-mode[data-mode="timed"]')) {
+        startTimedQuiz();
+    } else if (document.querySelector('.mode-button.selected-mode[data-mode="threeLives"]')) {
+        startThreeLivesQuiz();
+    }
+
+    // Show quiz elements when starting the quiz
+    document.getElementById('movie-info').style.display = 'flex';
+    document.getElementById('movie-info').style.justifyContent = 'center';
+    document.getElementById('movie-info').style.alignItems = 'center';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('choices').style.display = 'block';
+    document.getElementById('feedback-genre').style.display = 'block';
+    document.getElementById('feedback-year').style.display = 'block';
+    document.getElementById('stage-instruction').style.display = 'block';
+}
+
+function startThreeLivesQuiz() {
+    score = 0;
+    currentStage = 1;
+    quizStarted = true;
+    lives = 3; // Reset lives for new game
+    updateLivesDisplay();
+    document.getElementById('movie-info').style.display = 'flex';
+    document.getElementById('movie-info').style.justifyContent = 'center';
+    document.getElementById('movie-info').style.alignItems = 'center';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('choices').style.display = 'block';
+    document.getElementById('feedback-genre').style.display = 'block';
+    document.getElementById('feedback-year').style.display = 'block';
+    document.getElementById('stage-instruction').style.display = 'block';
+    updateMovieInfo();
+}
+
+function endQuiz() {
+    alert(`Time is up! Your score: ${score}`);
+    saveLastRoundResult(score);
+    resetQuizDisplay();
+}
+
+function resetQuizDisplay() {
+    currentStage = 1;
+    correctGenreGuessed = false;
+    correctYearGuessed = false;
+    quizStarted = false;
+    document.getElementById('stage-instruction').innerText = 'Stage 1: Guess the genre';
+    document.getElementById('choices').innerHTML = '';
+    document.getElementById('feedback-genre').innerText = '';
+    document.getElementById('feedback-year').innerText = '';
+    if (document.getElementById('timer-display')) {
+        document.getElementById('timer-display').innerText = '60';
+    }
+    document.getElementById('movie-info').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('choices').style.display = 'none';
+    document.getElementById('feedback-genre').style.display = 'none';
+    document.getElementById('feedback-year').style.display = 'none';
+    document.getElementById('stage-instruction').style.display = 'none';
+    lives = 3;
+    updateLivesDisplay();
+    document.getElementById('screen-default').style.display = 'flex'; // Ensure default screen is visible
+}
+
+// Function to save the result of the last played round
+function saveLastRoundResult(score) {
+    localStorage.setItem('lastRoundResult', `Score: ${score}`);
+}
+
+// Function to show the last round result in the statistics tab
+function showLastRoundResult() {
+    const lastRoundResult = localStorage.getItem('lastRoundResult');
+    if (lastRoundResult) {
+        document.getElementById('last-round-result').innerText = lastRoundResult;
     }
 }
 
+// Function to show 3 lives mode settings preview
 function showThreeLivesModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
+    setFixedSettingsPreviewStyles(previewBox);
     previewBox.innerHTML = `
         <p>Three Lives Mode</p>
         <div style="display: flex; width: 100%;">
-            <div id="lives-display" style="flex: 1; text-align: center; font-size: 2rem;">❤❤❤</div>
-            <button style="flex: 1; width: 50%;" onclick="startThreeLivesMode()">Start/Reset</button>
+            <div id="lives-display" style="flex: 1; text-align: center; font-size: 2rem;">❤️❤️❤️</div>
+            <button style="flex: 1; width: 50%;" onclick="resetThreeLivesMode()">Start/Reset</button>
         </div>
     `;
 }
 
-let lives;
-function startThreeLivesMode() {
-    lives = 3;
-    document.getElementById('lives-display').innerText = '❤❤❤';
-    document.getElementById('movie-info').style.display = 'flex';
-    document.getElementById('movie-info').style.justifyContent = 'center';
-    document.getElementById('movie-info').style.alignItems = 'center';
-    document.getElementById('stage-instruction').style.display = 'block';
-    document.getElementById('choices').style.display = 'block';
-    document.getElementById('feedback-genre').style.display = 'block';
-    document.getElementById('feedback-year').style.display = 'block';
-}
-
-function loseLife() {
-    if (lives > 0) {
-        lives--;
-        let hearts = '';
-        for (let i = 0; i < lives; i++) {
-            hearts += '❤';
-        }
-        for (let i = lives; i < 3; i++) {
-            hearts += '💔';
-        }
-        document.getElementById('lives-display').innerText = hearts;
-    }
-    if (lives === 0) {
-        alert('You have lost all your lives!');
-        resetThreeLivesMode();
-    }
-}
-
 function resetThreeLivesMode() {
-    if (lives !== 3) {
-        lives = 3;
-        document.getElementById('lives-display').innerText = '❤❤❤';
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('stage-instruction').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
+    if (quizStarted) {
+        resetQuizDisplay();
     } else {
-        startThreeLivesMode();
+        startThreeLivesQuiz();
     }
-
-    lives = 3;
-    document.getElementById('lives-display').innerText = '❤❤❤';
-    document.getElementById('movie-info').style.display = 'none';
-    document.getElementById('stage-instruction').style.display = 'none';
-    document.getElementById('choices').style.display = 'none';
-    document.getElementById('feedback-genre').style.display = 'none';
-    document.getElementById('feedback-year').style.display = 'none';
 }
 
+function updateLivesDisplay() {
+    const livesDisplay = document.getElementById('lives-display');
+    if (livesDisplay) {
+        let hearts = '❤️'.repeat(lives);
+        let brokenHearts = '💔'.repeat(3 - lives);
+        livesDisplay.innerText = hearts + brokenHearts;
+    }
+}
+
+// Function to show infinite play mode settings preview
 function showInfinitePlayModeSettingsPreview() {
     const previewBox = document.getElementById('settings-preview-box');
+    setFixedSettingsPreviewStyles(previewBox);
     previewBox.innerHTML = `
         <p>Infinite Play Mode</p>
         <div style="display: flex; width: 100%;">
@@ -154,23 +199,66 @@ function showInfinitePlayModeSettingsPreview() {
                 <option value="100">100 Rounds</option>
                 <option value="infinite">Infinite</option>
             </select>
-            <button style="flex: 1; width: 50%;" onclick="resetInfinitePlayMode()">Start/Reset</button>
+            <button style="flex: 1; width: 50%;" onclick="resetInfinitePlayMode()">Restart</button>
         </div>
     `;
+}
+
+// Function to set fixed settings preview styles
+function setFixedSettingsPreviewStyles(previewBox) {
+    previewBox.style.width = "450px";
+    previewBox.style.height = "100px"; // Fixed height to ensure consistency
+    previewBox.style.padding = "20px";
+    previewBox.style.marginBottom = "20px";
+    previewBox.style.border = "2px solid #333";
+    previewBox.style.borderRadius = "10px";
+    previewBox.style.backgroundColor = "#ffffff";
+    previewBox.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+    previewBox.style.overflow = "hidden";
 }
 
 function resetInfinitePlayMode() {
     alert('Infinite Play Mode restarted!');
 }
 
+// Function to show different screens based on tab selection
 function showScreen(screenName) {
+    // Remove active class from all tab buttons
     const tabButtons = document.querySelectorAll('.nav-tabs a');
     tabButtons.forEach(button => {
         button.classList.remove('active');
     });
+    // Add active class to the selected tab button
+    const selectedTabButton = document.querySelector(`.nav-tabs a[data-screen='${screenName}']`);
+    if (selectedTabButton) {
+        selectedTabButton.classList.add('active');
+    }
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => {
+        screen.style.display = 'none';
+    });
 
+    // Display the chosen screen
+    if (screenName === 'play') {
+        document.getElementById('screen-play').style.display = 'flex';
+        // Hide quiz elements initially for Three Lives Mode
+        if (document.querySelector('.mode-button.selected-mode[data-mode="threeLives"]')) {
+            resetQuizDisplay();
+        }
+    } else if (screenName === 'settings') {
+        document.getElementById('screen-settings').style.display = 'flex';
+        updateSettingsOptions();
+    } else if (screenName === 'statistics') {
+        document.getElementById('screen-statistics').style.display = 'flex';
+        showLastRoundResult();
+    } else if (screenName === 'default') {
+        document.getElementById('screen-default').style.display = 'flex'; // Ensure default screen is visible when selected
+    }
+    // Add active class to the selected tab button
     const selectedButton = document.querySelector(`.nav-tabs a[data-screen='${screenName}']`);
     if (selectedButton) {
+        selectedButton.classList.add('active');
+    }
         selectedButton.classList.add('active');
     }
     const screens = document.querySelectorAll('.screen');
@@ -178,12 +266,9 @@ function showScreen(screenName) {
         screen.style.display = 'none';
     });
 
+    // Display the chosen screen//////////////////////////////
     if (screenName === 'play') {
         document.getElementById('screen-play').style.display = 'flex';
-        document.getElementById('movie-info').style.display = 'none';
-        document.getElementById('choices').style.display = 'none';
-        document.getElementById('feedback-genre').style.display = 'none';
-        document.getElementById('feedback-year').style.display = 'none';
     } else if (screenName === 'settings') {
         document.getElementById('screen-settings').style.display = 'flex';
         updateSettingsOptions();
@@ -191,11 +276,6 @@ function showScreen(screenName) {
         document.getElementById('screen-statistics').style.display = 'flex';
         showLastRoundResult();
     }
-}
-
-// Update settings options in settings tab
-function updateSettingsOptions() {
-    const settingsContainer = document.getElementById('settings-container');
     settingsContainer.innerHTML = `
         <h3>Mode 1: Gameplay Variations</h3>
         <div class="quiz-modes">
@@ -244,7 +324,7 @@ function updateSettingsOptions() {
             </button>
         </div>
     `;
-}
+
 
 // Function to select display theme
 function selectTheme(theme) {
@@ -265,7 +345,6 @@ function selectDifficulty(level) {
         console.log('Hard mode selected');
     }
 }
-
 
 // Quiz Logic Part 1------------------------------------------------------
 const API_KEY = '3be2bc8a9d8fab379812442e317a4a99'; 
@@ -305,6 +384,7 @@ async function getTop2000RatedPopularMovies() {
     return topRatedPopularMovies;
 }
 
+
 // Function to get a random movie from the top 2000 rated and popular movies
 async function getRandomTopRatedPopularMovie() {
     const topRatedPopularMovies = await getTop2000RatedPopularMovies();
@@ -328,7 +408,7 @@ async function updateMovieInfo() {
     const imagesResponse = await fetch(movieImagesUrl);
     const imagesData = await imagesResponse.json();
 
-    // Try to find a suitable backdrop image
+// Try to find a suitable backdrop image
     let movieStill = imagesData.backdrops.find(
         image => image.aspect_ratio > 1.7 && image.vote_count > 5
     );
@@ -486,15 +566,6 @@ function checkAnswer(button, selectedAnswer) {
             proceedToNextStage(); 
         }
     }, 1000);
-}
-
-// Function to display the latest stats on page load
-function displayStats() {
-    const userStats = JSON.parse(localStorage.getItem('userStats')) || { attempts: 0, wins: 0, winRate: 0 };
-    
-    document.getElementById('attempts').innerText = userStats.attempts;
-    document.getElementById('wins').innerText = userStats.wins;
-    document.getElementById('win-rate').innerText = userStats.winRate.toFixed(2);
 }
 
 // When the quiz is complete (final stage/guess)
