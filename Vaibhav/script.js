@@ -46,6 +46,12 @@ function startTimer() {
     document.getElementById('movie-info').style.justifyContent = 'center';
     document.getElementById('movie-info').style.alignItems = 'center';
     document.getElementById('stage-instruction').style.display = 'block';
+    document.getElementById('stage-instruction').style.maxWidth = '450px';
+    document.getElementById('stage-instruction').style.margin = '0 auto';
+    document.getElementById('stage-instruction').style.padding = '15px';
+    document.getElementById('stage-instruction').style.backgroundColor = '#ffffff';
+    document.getElementById('stage-instruction').style.borderRadius = '10px';
+    document.getElementById('stage-instruction').style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
     document.getElementById('choices').style.display = 'block';
     document.getElementById('feedback-genre').style.display = 'block';
     document.getElementById('feedback-year').style.display = 'block';
@@ -56,6 +62,11 @@ function startTimer() {
             clearInterval(timer);
             timer = null;
             alert('Time is up!');
+            document.getElementById('movie-info').style.display = 'none';
+            document.getElementById('stage-instruction').style.display = 'none';
+            document.getElementById('choices').style.display = 'none';
+            document.getElementById('feedback-genre').style.display = 'none';
+            document.getElementById('feedback-year').style.display = 'none';
         }
     }, 1000);
 }
@@ -94,6 +105,12 @@ function startThreeLivesMode() {
     document.getElementById('movie-info').style.justifyContent = 'center';
     document.getElementById('movie-info').style.alignItems = 'center';
     document.getElementById('stage-instruction').style.display = 'block';
+    document.getElementById('stage-instruction').style.maxWidth = '450px';
+    document.getElementById('stage-instruction').style.margin = '0 auto';
+    document.getElementById('stage-instruction').style.padding = '15px';
+    document.getElementById('stage-instruction').style.backgroundColor = '#ffffff';
+    document.getElementById('stage-instruction').style.borderRadius = '10px';
+    document.getElementById('stage-instruction').style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
     document.getElementById('choices').style.display = 'block';
     document.getElementById('feedback-genre').style.display = 'block';
     document.getElementById('feedback-year').style.display = 'block';
@@ -110,12 +127,14 @@ function loseLife() {
             hearts += '💔';
         }
         document.getElementById('lives-display').innerText = hearts;
+        document.getElementById('settings-preview-box').querySelector('#lives-display').innerText = hearts;
     }
     if (lives === 0) {
         alert('You have lost all your lives!');
         resetThreeLivesMode();
     }
 }
+
 
 function resetThreeLivesMode() {
     if (lives !== 3) {
@@ -265,6 +284,7 @@ function selectDifficulty(level) {
         console.log('Hard mode selected');
     }
 }
+
 
 
 // Quiz Logic Part 1------------------------------------------------------
